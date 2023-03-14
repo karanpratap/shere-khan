@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "blog",
-    "slug": "blog",
-    "version": "1.0.0",
+    "name": "Shere Khan",
+    "slug": "Shere_Khan",
+    "version": "1.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/happy.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash2.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,12 +19,18 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/happy.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.despair.Shere_Khan"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4c714a94-62d1-4336-941f-e4bbfcbb45e0"
+      }
     }
   }
 }

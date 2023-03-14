@@ -1,33 +1,54 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, Text, FlatList, Button, TouchableOpacity } from "react-native";
-import { Context } from "../context/BlogContext";
+import { Context as ReportContext } from "../context/ReportContext";
+import { Context as PricesContext } from "../context/PricesContext";
+import { Context as ReleaseContext } from "../context/ReleaseContext";
 import { Feather } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
+import { Dialog, FAB } from "react-native-elements";
+import { expo } from '../../app.json';
+import { Linking } from "react-native";
+import Spacer from "../components/Spacer";
 
 const IndexScreen = ({ navigation }) => {
-  const { state, deleteBlogPost, getBlogPosts } = useContext(Context);
-  
-  console.log(state);
+  const { state, deleteReport, getReports } = useContext(ReportContext);
+  const { getPrices } = useContext(PricesContext);
+  const { state:releaseInfo, getReleaseInfo} = useContext(ReleaseContext);
+  const [dialogue, setDialogue] = useState(false);
+  const [updateDialogue, setUpdateDialogue] = useState(false);
+  const [centerToDelete, setCenterToDelete] = useState([]);
+
   useEffect(() => {
-    getBlogPosts();
+    getReleaseInfo();
+    getReports();
+    getPrices();
+    if (releaseInfo.update) {
+      setUpdateDialogue(releaseInfo.update);
+    }
+    console.log(updateDialogue);
     const listener = navigation.addListener('didFocus', () => {
-      getBlogPosts();
+      getReports();
     });
     return () => {
       listener.remove();
     };
-  }, []);
+  }, [releaseInfo.update]);
 
   return(
-    <View>
+    <View style={styles.main}>
       <FlatList 
         data={state}
-        keyExtractor={blogPost => blogPost.title}
+        keyExtractor={report => report.name}
         renderItem={({item}) => {
             return (
               <TouchableOpacity onPress={() => navigation.navigate('Show', { id: item.id })}> 
                 <View style={styles.row}>
-                  <Text style={styles.title}>{item.title} - {item.id}</Text>
-                  <TouchableOpacity onPress={() => {deleteBlogPost(item.id)}}>
+                  <Text style={styles.title}>{item.name}</Text>
+                  {/* <TouchableOpacity onPress={() => {deleteReport(item.id)}}> */}
+                  <TouchableOpacity onPress={() => {
+                    setDialogue(!dialogue);
+                    setCenterToDelete([item.name, item.id]);
+                    }}>
                     <Feather style={styles.icon} name='trash' />
                   </TouchableOpacity>
                 </View>
@@ -35,6 +56,39 @@ const IndexScreen = ({ navigation }) => {
             );
         }}
       />
+      <FAB
+        onPress={() => navigation.navigate('Create')}
+        placement="right"
+        icon={{ name: 'add', color: 'white' }}
+        color="#3366ff"
+        style={styles.fab}
+      />
+      <Dialog
+        isVisible={dialogue}
+        onBackdropPress={() => setDialogue(!dialogue)}
+      >
+        <Dialog.Title title="Delete Report"/>
+        <Text>Delete center report for {centerToDelete[0]}?</Text>
+        <Dialog.Actions>
+          <Dialog.Button titleStyle={{color: 'red'}} title="Delete" onPress={() => {deleteReport(centerToDelete[1]); setDialogue(!dialogue)}}/>
+          <Dialog.Button title="Cancel" onPress={() => setDialogue(!dialogue)}/>
+        </Dialog.Actions>
+      </Dialog>
+      <Dialog
+        isVisible={updateDialogue}
+        onBackdropPress={() => setUpdateDialogue(!updateDialogue)}
+      >
+        <Dialog.Title title="Update Available"/>
+        <Text>A new update for Shere Khan is available!</Text>
+        <Spacer />
+        <Text>Release Date: {releaseInfo.updateDate}</Text>
+        <Text>New Version: {releaseInfo.release}</Text>
+        <Text>Your Version: {expo.version}</Text>
+        <Dialog.Actions>
+          <Dialog.Button titleStyle={{color: 'green'}} title="Download" onPress={() => {Linking.openURL(`http://144.24.138.90/release/${releaseInfo.apk}`);setUpdateDialogue(!updateDialogue)}}/>
+          <Dialog.Button title="Cancel" onPress={() => setUpdateDialogue(!updateDialogue)}/>
+        </Dialog.Actions>
+      </Dialog>
     </View>
   );
 };
@@ -42,14 +96,23 @@ const IndexScreen = ({ navigation }) => {
 IndexScreen.navigationOptions = ({ navigation }) => {
   return {
     headerRight: () => (
-      <TouchableOpacity onPress={() => navigation.navigate('Create')}>
-        <Feather name="plus" size={30} marginRight={20} />
-      </TouchableOpacity>
+      <View style={styles.rowHeader}>
+        <TouchableOpacity onPress={() => { navigation.navigate('PricesShow') }}>
+              <Entypo name="price-tag" size={30} color="black" marginRight={20} />
+              {/* <Feather name="plus" size={30} marginRight={20} /> */}
+        </TouchableOpacity>
+      </View>
     ),
   };
 };
 
 const styles = StyleSheet.create({
+  main: {
+    flex: 1
+  },
+  rowHeader: {
+    flexDirection: 'row',
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -64,6 +127,9 @@ const styles = StyleSheet.create({
   icon: {
     fontSize: 24,
     color: 'red'
+  },
+  fab: {
+    alignSelf: "flex-end"
   }
 });
 

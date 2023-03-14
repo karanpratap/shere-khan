@@ -1,0 +1,206 @@
+{
+  "pregnantNursing": [
+    {
+        "midday": [
+        {"id": 1, "item": "Rice", "amount": 100},
+        {"id": 2, "item": "Moongi", "amount": 50},
+        {"id": 3, "item": "Oil", "amount": 5},
+        {"id": 4, "item": "Salt", "amount": 2},
+        {"id": 5, "item": "Haldi", "amount": 2}
+        ],
+        "breakfast": []
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 100},
+        {"item": "Channa", "amount": 50},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2}
+        ],
+        "breakfast": []
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 100},
+        {"item": "Nutri", "amount": 50},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2}
+        ],
+        "breakfast": []
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 100},
+        {"item": "Moongi", "amount": 50},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2}
+        ],
+        "breakfast": []
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 100},
+        {"item": "Channa", "amount": 50},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2}
+        ],
+        "breakfast": []
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 100},
+        {"item": "Nutri", "amount": 50},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2}
+        ],
+        "breakfast": []
+    }
+    ],
+    "6mTo3y": [
+    {
+        "midday": [
+        {"item": "Rice", "amount": 95},
+        {"item": "Moongi", "amount": 35},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2}
+        ],
+        "breakfast": []
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 95},
+        {"item": "Channa", "amount": 40},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2}         
+        ],
+        "breakfast": []
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 95},
+        {"item": "Nutri", "amount": 15},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2}           
+        ],
+        "breakfast": []
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 95},
+        {"item": "Moongi", "amount": 35},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2} 
+        ],
+        "breakfast": []
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 95},
+        {"item": "Channa", "amount": 40},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2}          
+        ],
+        "breakfast": []
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 95},
+        {"item": "Nutri", "amount": 15},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2}          
+        ],
+        "breakfast": []
+    }
+    ],
+    "3yTo6y": [
+    {
+        "midday": [
+        {"item": "Rice", "amount": 70},
+        {"item": "Moongi", "amount": 50},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2} 
+        ],
+        "breakfast": [
+        {"item": "Biscuits", "amount": 60}
+        ]
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 40},
+        {"item": "Channa", "amount": 50},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2}          
+        ],
+        "breakfast": [
+        {"item": "Suji", "amount": 25},
+        {"item": "Sugar", "amount": 20},
+        {"item": "Ghee", "amount": 20}
+        ]
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 70},
+        {"item": "Nutri", "amount": 50},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2}         
+        ],
+        "breakfast": [
+        {"item": "Biscuits", "amount": 60}
+        ]
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 70},
+        {"item": "Moongi", "amount": 30},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2} 
+        ],
+        "breakfast": [
+        {"item": "Suji", "amount": 25},
+        {"item": "Sugar", "amount": 20},
+        {"item": "Ghee", "amount": 20}
+        ]
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 40},
+        {"item": "Channa", "amount": 20},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2}          
+        ],
+        "breakfast": [
+        {"item": "Biscuits", "amount": 60}
+        ]
+    },
+    {
+        "midday": [
+        {"item": "Rice", "amount": 70},
+        {"item": "Nutri", "amount": 30},
+        {"item": "Oil", "amount": 5},
+        {"item": "Salt", "amount": 2},
+        {"item": "Haldi", "amount": 2}         
+        ],
+        "breakfast": [
+        {"item": "Suji", "amount": 25},
+        {"item": "Sugar", "amount": 20},
+        {"item": "Ghee", "amount": 20}
+        ]
+    }
+  ]
+}
