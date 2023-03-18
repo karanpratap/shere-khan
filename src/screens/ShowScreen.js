@@ -6,30 +6,47 @@ import { Context as ReportContext } from "../context/ReportContext";
 import { Context as PricesContext } from "../context/PricesContext";
 import { EvilIcons } from "@expo/vector-icons"
 import Spacer from "../components/Spacer";
-import priceRecalculator from "../api/priceRecalculator";
+// import priceRecalculator from "../api/priceRecalculator";
 
 const ShowScreen = ({ navigation }) => {
     const { state, editReport } = useContext(ReportContext);
     const { state:prices } = useContext(PricesContext)
 
     const report = state.find((report) => report.id === navigation.getParam('id'));
+    console.log(report.adjustments);
 
     useEffect(() => {
-        priceRecalculator(report, prices);
-        editReport(report.name, report.days, report.pregnantCount, report.sixtothreeCount, report.threetosixCount, report.id, prices, () => null);
-        const listener = navigation.addListener('didFocus', () => {
-            priceRecalculator(report, prices);
-            editReport(report.name, report.days, report.pregnantCount, report.sixtothreeCount, report.threetosixCount, report.id, prices, () => null);
-        });
-        return () => {
-          listener.remove();
-        };
+        editReport(report.name, report.adjustments ? -1 : report.days, report.pregnantCount, report.sixtothreeCount, report.threetosixCount, report.id, report.adjustments, report.money, prices, () => null);
     }, []);
 
+    // calculate total price
     let totalPrice = 0;
+    let adjustedPrice = 0;
+    let adjustedChanna = report.adjustments ? Number(report.adjustments.Channa) : 0;
+    let adjustedMoongi = report.adjustments ? Number(report.adjustments.Moongi) : 0;
+    console.log(prices);
+    prices.forEach(price => {
+        if (price.item === 'Channa') {
+            adjustedPrice += (Number(price.price)*adjustedChanna/1000);
+            console.log('Adjusted price after Channa = ', adjustedPrice);
+        }
+        else if (price.item === 'Moongi') {
+            adjustedPrice += (Number(price.price)*adjustedMoongi/1000);
+            console.log('Adjusted price after Moongi = ', adjustedPrice);
+        }
+    });
     report.results.forEach(item => {
         totalPrice += item.price;
+        if (item.item === 'Channa') {
+            adjustedChanna += Number(item.amount);
+        }
+        else if (item.item === 'Moongi') {
+            adjustedMoongi += Number(item.amount);
+        }
     });
+    totalPrice = totalPrice.toFixed(2);
+    console.log(totalPrice);
+    console.log(adjustedPrice);
 
     return <>
         <Text h4 style={styles.title}>{report.name} report for {report.days} days</Text>
@@ -50,7 +67,7 @@ const ShowScreen = ({ navigation }) => {
         <Spacer />
         <View style={styles.tableStyle}>
             <Text style={styles.tableHeader}>   Item</Text>
-            <Text style={styles.tableHeader}>   Amount</Text>
+            <Text style={styles.tableHeader}>   Qty.</Text>
             <Text style={styles.tableHeader}>   Rounded</Text>
             <Text style={styles.tableHeader}>   Price</Text>
         </View>
@@ -69,6 +86,12 @@ const ShowScreen = ({ navigation }) => {
             }}
         />
         <Text style={styles.infoViewStrong}>Total price for {report.name}: {'\u20B9'}{totalPrice}</Text>
+        { report.adjustments ? <Spacer>
+            <Text style={styles.infoViewStrongNoMargin}>Adjustments:</Text>
+            <Text style={styles.important}>Adjusted quantity for Channa: {adjustedChanna.toFixed(2)}g (Extra {report.adjustments.Channa}g)</Text>
+            <Text style={styles.important}>Adjusted quantity for Moongi: {adjustedMoongi.toFixed(2)}g (Extra {report.adjustments.Moongi}g)</Text>
+            <Text style={styles.infoViewStrongNoMargin}>Total price after adjustments: {'\u20B9'}{(Number(totalPrice) + Number(adjustedPrice)).toFixed(2)}</Text>
+        </Spacer> : <Text style={styles.infoViewStrong}>No adjustments</Text>}
         <Spacer />
         <Spacer />
     </>
@@ -136,6 +159,16 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         fontWeight: "bold"
     },
+    infoViewStrongNoMargin: {
+        flexDirection: 'row',
+        // justifyContent: 'space-between',
+        alignItems: "flex-start",
+        fontWeight: "bold"
+    },
+    important: {
+        color: 'blue',
+        fontWeight: "bold"
+    }
 });
 
 export default ShowScreen;

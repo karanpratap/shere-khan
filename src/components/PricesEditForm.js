@@ -6,7 +6,6 @@ import NumericInput from "react-native-numeric-input";
 import Spacer from "./Spacer";
 
 const PricesEditForm = ({ onSubmit, initialValues }) => {
-    console.log(initialValues);
     const [price, setPrice] = useState(initialValues.price);
     
     return <ScrollView>

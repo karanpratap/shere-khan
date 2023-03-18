@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, Text, FlatList, Button, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, FlatList, Button, TouchableOpacity, Image } from "react-native";
 import { Context as ReportContext } from "../context/ReportContext";
 import { Context as PricesContext } from "../context/PricesContext";
 import { Context as ReleaseContext } from "../context/ReleaseContext";
@@ -9,6 +9,7 @@ import { Dialog, FAB } from "react-native-elements";
 import { expo } from '../../app.json';
 import { Linking } from "react-native";
 import Spacer from "../components/Spacer";
+// import calculateNutritionAmount from "../api/calculator_test";
 
 const IndexScreen = ({ navigation }) => {
   const { state, deleteReport, getReports } = useContext(ReportContext);
@@ -22,10 +23,10 @@ const IndexScreen = ({ navigation }) => {
     getReleaseInfo();
     getReports();
     getPrices();
+    // calculateNutritionAmount(1,1, prices);
     if (releaseInfo.update) {
       setUpdateDialogue(releaseInfo.update);
     }
-    console.log(updateDialogue);
     const listener = navigation.addListener('didFocus', () => {
       getReports();
     });
@@ -36,7 +37,7 @@ const IndexScreen = ({ navigation }) => {
 
   return(
     <View style={styles.main}>
-      <FlatList 
+      {state.length >0 ? <FlatList 
         data={state}
         keyExtractor={report => report.name}
         renderItem={({item}) => {
@@ -55,7 +56,12 @@ const IndexScreen = ({ navigation }) => {
               </TouchableOpacity>
             );
         }}
-      />
+      /> : <View style={styles.empty}>
+        <Image style={styles.image} source={require('../../assets/lion.png')} odds={3} />
+        <Spacer />
+        <Spacer />
+        <Text style={styles.subtitle}>Quiet and lonely</Text>
+      </View>}
       <FAB
         onPress={() => navigation.navigate('Create')}
         placement="right"
@@ -108,6 +114,10 @@ IndexScreen.navigationOptions = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   main: {
+    flex: 1,
+  },
+  empty: {
+    justifyContent: "center",
     flex: 1
   },
   rowHeader: {
@@ -129,7 +139,18 @@ const styles = StyleSheet.create({
     color: 'red'
   },
   fab: {
-    alignSelf: "flex-end"
+    alignSelf: "flex-end",
+  },
+  image: {
+    height: 200,
+    width: 200,
+    alignSelf: "center"
+  },
+  subtitle: {
+    alignSelf: "center",
+    color: "gray",
+    fontWeight: "bold",
+    fontSize: 18
   }
 });
 

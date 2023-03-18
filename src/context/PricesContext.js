@@ -23,7 +23,6 @@ const getPrices = dispatch => {
 
 const editPrices = dispatch => {
     return async (item, price, id, callback) => {
-        // WRITE THE MAGIC LOGIC HERE
         await jsonServer.put(`/prices/${id}`, { item, price });
         dispatch({
             type: 'edit_prices',

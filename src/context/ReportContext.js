@@ -33,10 +33,9 @@ const getReports = dispatch => {
 };
 
 const addReport = () => {
-    return async (name, days, pregnantCount, sixtothreeCount, threetosixCount, prices, callback) => {
-        // WRITE THE MAGIC LOGIC HERE
-        const results = calculateNutritionAmount({ name, days, pregnantCount, sixtothreeCount, threetosixCount }, true, prices);
-        await jsonServer.post('/reports', {name, days, pregnantCount, sixtothreeCount, threetosixCount, results});
+    return async (name, days, pregnantCount, sixtothreeCount, threetosixCount, money, prices, callback) => {
+        const results = calculateNutritionAmount({ name, days, pregnantCount, sixtothreeCount, threetosixCount, money }, true, prices);
+        await jsonServer.post('/reports', {name, days: results.days, pregnantCount, sixtothreeCount, threetosixCount, results: results.results, money, adjustments: results.adjustments });
         // dispatch({type: 'add_blogpost', payload: {title, content}});
         callback();
     };
@@ -50,13 +49,12 @@ const deleteReport = dispatch => {
 }
 
 const editReport = dispatch => {
-    return async (name, days, pregnantCount, sixtothreeCount, threetosixCount, id, prices, callback) => {
-        // WRITE THE MAGIC LOGIC HERE
-        const results = calculateNutritionAmount({ name, days, pregnantCount, sixtothreeCount, threetosixCount }, true, prices);
-        await jsonServer.put(`/reports/${id}`, { name, days, pregnantCount, sixtothreeCount, threetosixCount, results });
+    return async (name, days, pregnantCount, sixtothreeCount, threetosixCount, id, adjustments, money, prices, callback) => {
+        const results = calculateNutritionAmount({ name, days, pregnantCount, sixtothreeCount, threetosixCount, money, adjustments }, true, prices);
+        await jsonServer.put(`/reports/${id}`, { name, days: results.days, pregnantCount, sixtothreeCount, threetosixCount, results: results.results, money, adjustments: results.adjustments });
         dispatch({
             type: 'edit_report',
-            payload: { id, name, days, pregnantCount, sixtothreeCount, threetosixCount, results }
+            payload: { id, name, days: results.days, pregnantCount, sixtothreeCount, threetosixCount, results: results.results, money, adjustments: results.adjustments }
         });
         callback();
     }

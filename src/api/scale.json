@@ -127,7 +127,7 @@
     {
         "midday": [
         {"item": "Rice", "amount": 70},
-        {"item": "Moongi", "amount": 50},
+        {"item": "Moongi", "amount": 30},
         {"item": "Oil", "amount": 5},
         {"item": "Salt", "amount": 2},
         {"item": "Haldi", "amount": 2} 
@@ -139,7 +139,7 @@
     {
         "midday": [
         {"item": "Rice", "amount": 40},
-        {"item": "Channa", "amount": 50},
+        {"item": "Channa", "amount": 20},
         {"item": "Oil", "amount": 5},
         {"item": "Salt", "amount": 2},
         {"item": "Haldi", "amount": 2}          
@@ -153,7 +153,7 @@
     {
         "midday": [
         {"item": "Rice", "amount": 70},
-        {"item": "Nutri", "amount": 50},
+        {"item": "Nutri", "amount": 30},
         {"item": "Oil", "amount": 5},
         {"item": "Salt", "amount": 2},
         {"item": "Haldi", "amount": 2}         

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { Input, Text, Button } from "react-native-elements";
+import { Input, Text, Button, CheckBox } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
 import NumericInput from "react-native-numeric-input";
 import Spacer from "./Spacer";
@@ -9,21 +9,40 @@ const NutritionReportForm = ({ onSubmit, initialValues }) => {
     const [name, setName] = useState(initialValues.name);
     const [days, setDays] = useState(initialValues.days);
     const [pregnantCount, setPregnantCount] = useState(initialValues.pregnantCount);
-    const [sixtothreeCount, setSixtothreeCount] = useState(initialValues.pregnantCount);
-    const [threetosixCount, setThreetosixCount] = useState(initialValues.pregnantCount);
+    const [sixtothreeCount, setSixtothreeCount] = useState(initialValues.sixtothreeCount);
+    const [threetosixCount, setThreetosixCount] = useState(initialValues.threetosixCount);
+    const [breaker, setBreaker] = useState(0);
+    const [money, setMoney] = useState(initialValues.money)
 
     return <ScrollView>
         <Spacer>
             <Text h3>Specify metrics</Text>
         </Spacer>
         <Spacer />
-        <Input value={name} onChangeText={setName} label="Center name" />
-        <Spacer>
+        <Input placeholder="Enter a center name" errorMessage={name.length == 0 ? "Center name cannot be empty" : null} value={name} onChangeText={setName} label="Center name" />
+        <View style={styles.radio}>
+            <CheckBox
+                title="Days"
+                checked={breaker === 0}
+                onPress={() => setBreaker(0)}
+                checkedIcon="dot-circle-o"
+                uncheckedIcon="circle-o"
+            />
+            <CheckBox
+                title="Money"
+                checked={breaker === 1}
+                onPress={() => setBreaker(1)}
+                checkedIcon="dot-circle-o"
+                uncheckedIcon="circle-o"
+            />
+        </View>
+        { breaker === 0 ? <Spacer>
             <Text style={styles.numericLabels}>Number of days</Text>
             <Spacer />
-            <NumericInput totalWidth={150} value={days} totalHeight={50} step={3} minValue={0} onChange={value => setDays(value)} rounded />
-        </Spacer>
-        <Spacer />
+            <NumericInput totalWidth={150} value={days} totalHeight={50} minValue={0} onChange={value => setDays(value)} rounded />
+        </Spacer> : <Spacer>
+            <Input placeholder="Enter the money received" label="Money received" keyboardType="numeric" inputMode="numeric" value={'' + money} onChangeText={ value => setMoney(value)} errorMessage={!money ? "Money received is required" : null} />
+        </Spacer> }
         <Spacer>
             <Text style={styles.numericLabels}>Number of Pregnant/Nursing beneficiaries</Text>
             <Spacer />
@@ -44,7 +63,9 @@ const NutritionReportForm = ({ onSubmit, initialValues }) => {
         <Spacer />
         {/* <Input value={content} onChangeText={setContent} label="Number of days" /> */}
         <Spacer>
-            <Button title="Calculate and Save" onPress={() => onSubmit(name, days, pregnantCount, sixtothreeCount, threetosixCount)} />
+            <Button disabled={name.length == 0 || (money === '' && breaker === 1)} title="Calculate and Save" onPress={() => {
+                breaker === 1 ? onSubmit(name, -1, pregnantCount, sixtothreeCount, threetosixCount, money, initialValues.adjustments) : onSubmit(name, days, pregnantCount, sixtothreeCount, threetosixCount, 0, initialValues.adjustments);
+            } }/>
         </Spacer>
         <Spacer />
     </ScrollView>
@@ -53,10 +74,12 @@ const NutritionReportForm = ({ onSubmit, initialValues }) => {
 NutritionReportForm.defaultProps = {
     initialValues: {
         name: '',
-        days: 0,
+        days: 24,
         pregnantCount: 0,
         sixtothreeCount: 0,
-        threetosixCount: 0
+        threetosixCount: 0,
+        money: 0,
+        adjustments: null
     }
 }
 
@@ -71,6 +94,9 @@ const styles = StyleSheet.create({
     numericLabels: {
         fontWeight: "bold",
         fontSize: 15,
+    },
+    radio: {
+        flexDirection: "row"
     }
 });
 

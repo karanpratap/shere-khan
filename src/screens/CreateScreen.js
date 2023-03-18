@@ -8,8 +8,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 const CreateScreen = ({ navigation }) => {
     const { addReport } = useContext(Context);
     const { state:prices } = useContext(PricesContext);
-    return <NutritionReportForm onSubmit={(name, days, pregnantCount, sixtothreeCount, threetosixCount) => {
-        addReport(name, days, pregnantCount, sixtothreeCount, threetosixCount, prices, () => {
+    return <NutritionReportForm onSubmit={(name, days, pregnantCount, sixtothreeCount, threetosixCount, money) => {
+        addReport(name, days, pregnantCount, sixtothreeCount, threetosixCount, money, prices, () => {
             navigation.navigate('Index');
         })
     }}
