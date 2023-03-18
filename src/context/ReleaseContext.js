@@ -13,7 +13,7 @@ const releaseReducer = (state, action) => {
 
 const getReleaseInfo = dispatch => {
     return async () => {
-        const response = await releaseInfo.get('/release/release_info.json');
+        const response = await releaseInfo.get('/release/release_info.json', {headers:{'Cache-Control':'no-cache'}});
         dispatch({ type: 'get_releaseinfo', payload: { ...response.data, update: Number(response.data.release) > Number(expo.version) } });
     }
 };
