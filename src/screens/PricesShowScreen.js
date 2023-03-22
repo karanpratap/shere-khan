@@ -1,20 +1,27 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { Text } from "react-native-elements";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { Context } from "../context/PricesContext";
 import { EvilIcons } from "@expo/vector-icons"
 import Spacer from "../components/Spacer";
 import calculateNutritionAmount from "../api/calculator";
 
 const PricesShowScreen = ({ navigation }) => {
-    const { state, getPrices } = useContext(Context);
+    const [biscuitUnitWeight, setBiscuitUnitWeight] = useState(0);
+    const { state, getPrices, editPrices } = useContext(Context);
     console.log(state);
 
     calculateNutritionAmount(1, 2, state);
 
     useEffect(() => {
         getPrices();
+        state.forEach((item) => {
+            console.log(item);
+            if (item.item === 'biscuitUnit') {
+                setBiscuitUnitWeight(item.price);
+            }
+        })
         const listener = navigation.addListener('didFocus', () => {
             getPrices();
         });
@@ -34,17 +41,22 @@ const PricesShowScreen = ({ navigation }) => {
             data={state}
             keyExtractor={price => price.item}
             renderItem={({item}) => {
-                return (
+                return item.item != 'biscuitUnit' ? (
                     <TouchableOpacity onPress={() => navigation.navigate('PricesEdit', { id: item.id })}>
                         <View style={styles.tableStyle}>
                         <Text style={styles.tableContents}>   {item.item}</Text>
                         <Text style={styles.tableContents}>   {'\u20B9'} {item.price}</Text>
                         </View>
                     </TouchableOpacity>
-                );
+                ) : null;
             }}
         />
         <Spacer />
+        <View style={styles.formItem}>
+            <Text style={styles.label}>Unit Wt of Biscuits Pkt:</Text> 
+            <TextInput style={styles.input} onEndEditing={() => editPrices('biscuitUnit', biscuitUnitWeight, 12, () => null)} value={'' + biscuitUnitWeight} onChangeText={setBiscuitUnitWeight} inputMode="numeric" keyboardType="numeric" />
+            <Text style={styles.label}>g</Text>
+        </View>
         <Spacer />
         <Text style={styles.infoViewStrong}>Tip: Touch a row to change price for that Ingredient!</Text>
     </View>
@@ -106,6 +118,22 @@ const styles = StyleSheet.create({
         // justifyContent: 'space-between',
         alignItems: "flex-start",
         fontWeight: "bold"
+    },
+    formItem: {
+        marginLeft: 10,
+        flexDirection: "row"
+    },
+    input: {
+        borderBottomWidth: 1,
+        borderColor: 'black',
+        marginBottom: 5,
+        marginLeft: 10,
+        width: 60,
+        fontSize: 18
+    },
+    label: {
+        fontWeight: "bold",
+        fontSize: 18,
     }
 });
 

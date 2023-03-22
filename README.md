@@ -1,2 +1,2 @@
-# blog
-Mobile Application to understand basic CRUD operations usnig react native.
+# Shere Khan
+Mobile Application to understand basic CRUD operations using react native.

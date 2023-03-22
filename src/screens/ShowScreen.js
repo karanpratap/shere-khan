@@ -24,6 +24,8 @@ const ShowScreen = ({ navigation }) => {
     let adjustedPrice = 0;
     let adjustedChanna = report.adjustments ? Number(report.adjustments.Channa) : 0;
     let adjustedMoongi = report.adjustments ? Number(report.adjustments.Moongi) : 0;
+    let biscuitUnits = 0;
+    let biscuitWeight = 0;
     console.log(prices);
     prices.forEach(price => {
         if (price.item === 'Channa') {
@@ -34,6 +36,9 @@ const ShowScreen = ({ navigation }) => {
             adjustedPrice += (Number(price.price)*adjustedMoongi/1000);
             console.log('Adjusted price after Moongi = ', adjustedPrice);
         }
+        else if (price.item === 'biscuitUnit') {
+            biscuitWeight = price.price;
+        }
     });
     report.results.forEach(item => {
         totalPrice += item.price;
@@ -42,6 +47,9 @@ const ShowScreen = ({ navigation }) => {
         }
         else if (item.item === 'Moongi') {
             adjustedMoongi += Number(item.amount);
+        }
+        else if (item.item === 'Biscuits') {
+            biscuitUnits = Number(item.amount)/biscuitWeight;
         }
     });
     totalPrice = totalPrice.toFixed(2);
@@ -86,6 +94,7 @@ const ShowScreen = ({ navigation }) => {
             }}
         />
         <Text style={styles.infoViewStrong}>Total price for {report.name}: {'\u20B9'}{totalPrice}</Text>
+        <Text style={styles.infoViewStrong}>Biscuit Packets @ {biscuitWeight}g: {biscuitUnits} ({Math.ceil(biscuitUnits)} pkts)</Text>
         { report.adjustments ? <Spacer>
             <Text style={styles.infoViewStrongNoMargin}>Adjustments:</Text>
             <Text style={styles.important}>Adjusted quantity for Channa: {adjustedChanna.toFixed(2)}g (Extra {report.adjustments.Channa}g)</Text>

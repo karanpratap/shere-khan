@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, Text, FlatList, Button, TouchableOpacity, Image } from "react-native";
+import { View, StyleSheet, Text, FlatList, Button, TouchableOpacity, Image, ToastAndroid } from "react-native";
 import { Context as ReportContext } from "../context/ReportContext";
 import { Context as PricesContext } from "../context/PricesContext";
 import { Context as ReleaseContext } from "../context/ReleaseContext";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { Feather } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { Dialog, FAB } from "react-native-elements";
@@ -18,22 +19,33 @@ const IndexScreen = ({ navigation }) => {
   const [dialogue, setDialogue] = useState(false);
   const [updateDialogue, setUpdateDialogue] = useState(false);
   const [centerToDelete, setCenterToDelete] = useState([]);
+  const netinfo = useNetInfo();
+  
+  // const showErrorToast = () => {
+  //   ToastAndroid.show('Looks like you are offline', ToastAndroid.SHORT);
+  // }
 
   useEffect(() => {
+    if (!netinfo.isConnected && netinfo.isConnected != null) {
+      ToastAndroid.show('Looks like you are offline', ToastAndroid.SHORT);
+    }
     getReleaseInfo();
     getReports();
     getPrices();
-    // calculateNutritionAmount(1,1, prices);
     if (releaseInfo.update) {
       setUpdateDialogue(releaseInfo.update);
     }
+    
     const listener = navigation.addListener('didFocus', () => {
+      if (!netinfo.isConnected && netinfo.isConnected != null) {
+        ToastAndroid.show('Looks like you are offline', ToastAndroid.SHORT);
+      } 
       getReports();
     });
     return () => {
       listener.remove();
     };
-  }, [releaseInfo.update]);
+  }, [releaseInfo.update, netinfo.isConnected]);
 
   return(
     <View style={styles.main}>
@@ -80,6 +92,17 @@ const IndexScreen = ({ navigation }) => {
           <Dialog.Button title="Cancel" onPress={() => setDialogue(!dialogue)}/>
         </Dialog.Actions>
       </Dialog>
+      {/* <Dialog
+        isVisible={errorDialogue}
+        onBackdropPress={() => setDialogue(!errorDialogue)}
+      >
+        <Dialog.Title title="Network error"/>
+        <Text>Seems like you are not connected to the internet, the app will not work as prices and reports need to be stored and fetched over the internet</Text>
+        <Dialog.Actions>
+          <Dialog.Button titleStyle={{color: 'orange'}} title="Retry" onPress={() => console.log('Yo')}/>
+          <Dialog.Button title="Cancel" onPress={() => {setDialogue(!errorDialogue); showErrorToast();}}/>
+        </Dialog.Actions>
+      </Dialog> */}
       <Dialog
         isVisible={updateDialogue}
         onBackdropPress={() => setUpdateDialogue(!updateDialogue)}
