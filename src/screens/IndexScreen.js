@@ -92,17 +92,6 @@ const IndexScreen = ({ navigation }) => {
           <Dialog.Button title="Cancel" onPress={() => setDialogue(!dialogue)}/>
         </Dialog.Actions>
       </Dialog>
-      {/* <Dialog
-        isVisible={errorDialogue}
-        onBackdropPress={() => setDialogue(!errorDialogue)}
-      >
-        <Dialog.Title title="Network error"/>
-        <Text>Seems like you are not connected to the internet, the app will not work as prices and reports need to be stored and fetched over the internet</Text>
-        <Dialog.Actions>
-          <Dialog.Button titleStyle={{color: 'orange'}} title="Retry" onPress={() => console.log('Yo')}/>
-          <Dialog.Button title="Cancel" onPress={() => {setDialogue(!errorDialogue); showErrorToast();}}/>
-        </Dialog.Actions>
-      </Dialog> */}
       <Dialog
         isVisible={updateDialogue}
         onBackdropPress={() => setUpdateDialogue(!updateDialogue)}
