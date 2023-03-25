@@ -1,10 +1,24 @@
 import scale from './scale.json';
 
-const roundOffToNearestTen = (number) => {
-    return (number%10 >= 5) ? Math.ceil(number/10) * 10 : Math.floor(number/10) * 10;
+const roundOffToNearestTen = (number, unit) => {
+    return (number%unit < unit/2 && (number/unit).toFixed(0) != 0) ? Math.floor(number/unit) * unit : Math.ceil(number/unit) * unit;
 }
 
 const calculateNutritionAmount = (metrics, breakfast, prices) => {
+    // TODO: Make this better!
+    const itemizations = {
+        'Oil': 1000,
+        'Ghee': 1000,
+        'Haldi': 1000,
+        'Salt': 1000,
+        'Biscuits': 50,
+        'Suji': 500,
+        'Rice': 10,
+        'Moongi': 10,
+        'Channa': 10,
+        'Sugar': 10,
+        'Nutri': 10
+    }
     console.log('ENTER CALCULATOR')
     let prices_reworked = {}
     prices.forEach(item => {
@@ -92,7 +106,7 @@ const calculateNutritionAmount = (metrics, breakfast, prices) => {
                 });
             });
             Object.keys(temp).forEach(tempKey => {
-                finalPrice += roundOffToNearestTen(temp[tempKey]) * prices_reworked[tempKey]/1000;
+                finalPrice += roundOffToNearestTen(temp[tempKey], itemizations[tempKey]) * prices_reworked[tempKey]/1000;
             });
             if (finalPrice > totalMoney) {
                 let diff = totalMoney - lastPrice;
@@ -116,7 +130,7 @@ const calculateNutritionAmount = (metrics, breakfast, prices) => {
     };
     console.log(lastTemp);
     Object.keys(lastTemp).forEach(tempKey => {
-        results.push({ 'item': tempKey, 'amount': lastTemp[tempKey], 'roundOffAmount': roundOffToNearestTen(lastTemp[tempKey]), 'price': roundOffToNearestTen(lastTemp[tempKey]) * prices_reworked[tempKey]/1000 });
+        results.push({ 'item': tempKey, 'amount': lastTemp[tempKey], 'roundOffAmount': roundOffToNearestTen(lastTemp[tempKey], itemizations[tempKey]), 'price': roundOffToNearestTen(lastTemp[tempKey], itemizations[tempKey]) * prices_reworked[tempKey]/1000 });
     });
     console.log('EXIT CALCULATOR -> ', results)
     return { results, days, adjustments };

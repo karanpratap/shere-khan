@@ -34,31 +34,35 @@ const PricesShowScreen = ({ navigation }) => {
         <Text h4>Ingredient Price List</Text>
         <Spacer />
         <View style={styles.tableStyle}>
-            <Text style={styles.tableHeader}>   Item</Text>
-            <Text style={styles.tableHeader}>   Price/KG</Text>
+            <Text style={styles.tableHeaderItem}>   Item</Text>
+            <Text style={styles.tableHeaderPrice}>   Price/KG</Text>
         </View>
         <FlatList
             data={state}
             keyExtractor={price => price.item}
             renderItem={({item}) => {
                 return item.item != 'biscuitUnit' ? (
-                    <TouchableOpacity onPress={() => navigation.navigate('PricesEdit', { id: item.id })}>
-                        <View style={styles.tableStyle}>
-                        <Text style={styles.tableContents}>   {item.item}</Text>
-                        <Text style={styles.tableContents}>   {'\u20B9'} {item.price}</Text>
+                    <View style={styles.tableStyle}>
+                        <Text style={styles.tableItem}>   {item.item}</Text>
+                        <Text style={styles.tablePrice}>   {'\u20B9'} {item.price}</Text>
+                        <View style={styles.tableEdit}>
+                            <TouchableOpacity style={{flexDirection: 'row',  alignItems: "flex-start"}} onPress={() => navigation.navigate('PricesEdit', { id: item.id })}>
+                                <Text style={styles.tableEditFont}>EDIT</Text>
+                                <EvilIcons name="pencil" size={20} marginRight={10} />
+                            </TouchableOpacity>
+                            </View>
                         </View>
-                    </TouchableOpacity>
                 ) : null;
             }}
         />
         <Spacer />
-        <View style={styles.formItem}>
+        {/* <View style={styles.formItem}>
             <Text style={styles.label}>Unit Wt of Biscuits Pkt:</Text> 
             <TextInput style={styles.input} onEndEditing={() => editPrices('biscuitUnit', biscuitUnitWeight, 12, () => null)} value={'' + biscuitUnitWeight} onChangeText={setBiscuitUnitWeight} inputMode="numeric" keyboardType="numeric" />
             <Text style={styles.label}>g</Text>
-        </View>
+        </View> */}
         <Spacer />
-        <Text style={styles.infoViewStrong}>Tip: Touch a row to change price for that Ingredient!</Text>
+        <Text style={styles.infoViewStrong}>Tip: Touch the EDIT column to change price for that Ingredient!</Text>
     </View>
 };
 
@@ -87,22 +91,39 @@ const styles = StyleSheet.create({
         margin: 15
     },
     tableStyle: {
-        borderWidth: 1,
-        borderColor: 'black',
         flexDirection: 'row',
+        borderBottomWidth:0.5,
         // justifyContent: 'space-between',
         alignItems: "flex-start",
     },
-    tableContents: {
-        borderLeftWidth:1,
-        flex: 1,
+    tableItem: {
+        flex: 2,
         fontSize: 14,
         alignItems: "stretch",
         backgroundColor: "#e6f7ff"
     },
-    tableHeader: {
-        borderLeftWidth:1,
-        flex: 1,
+    tablePrice: {
+        flex: 1.5,
+        fontSize: 14,
+        alignItems: "stretch",
+        backgroundColor: "#e6f7ff"
+    },
+    tableEdit: {
+        backgroundColor: "#e6f7ff",
+        flex: 1
+    },
+    tableEditFont: {
+        fontWeight: "bold"
+    },
+    tableHeaderItem: {
+        flex: 2,
+        alignItems: "stretch",
+        fontSize: 18,
+        fontWeight: "bold",
+        backgroundColor: "#99ddff"
+    },
+    tableHeaderPrice: {
+        flex: 2.5,
         alignItems: "stretch",
         fontSize: 18,
         fontWeight: "bold",

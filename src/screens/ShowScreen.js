@@ -1,6 +1,6 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, FlatList, ScrollView } from "react-native";
-import { Text } from "react-native-elements";
+import { Button, Dialog, Tab, Text } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Context as ReportContext } from "../context/ReportContext";
 import { Context as PricesContext } from "../context/PricesContext";
@@ -9,6 +9,7 @@ import Spacer from "../components/Spacer";
 // import priceRecalculator from "../api/priceRecalculator";
 
 const ShowScreen = ({ navigation }) => {
+    const [index, setIndex] = useState(0);
     const { state, editReport } = useContext(ReportContext);
     const { state:prices } = useContext(PricesContext)
 
@@ -18,6 +19,25 @@ const ShowScreen = ({ navigation }) => {
     useEffect(() => {
         editReport(report.name, report.adjustments ? -1 : report.days, report.pregnantCount, report.sixtothreeCount, report.threetosixCount, report.id, report.adjustments, report.money, prices, () => null);
     }, []);
+
+    // TODO: Make this better!
+    const itemizations = {
+        'Oil': 1000,
+        'Ghee': 1000,
+        'Haldi': 1000,
+        'Salt': 1000,
+        'Biscuits': 50,
+        'Suji': 500,
+        'Rice': 10,
+        'Moongi': 10,
+        'Channa': 10,
+        'Sugar': 10,
+        'Nutri': 10
+    };
+    const units_calc = (quantity, unit) => {
+        return unit === 10 ? quantity >= 1000 ? Math.floor(quantity/1000) + 'kg ' + quantity%1000 + 'g' : quantity%1000 + 'g' : quantity/unit + ' unit(s) (' + unit  + 'g per)';
+    };
+    let units_list = [];
 
     // calculate total price
     let totalPrice = 0;
@@ -40,17 +60,23 @@ const ShowScreen = ({ navigation }) => {
             biscuitWeight = price.price;
         }
     });
+    let quantity = 0;
     report.results.forEach(item => {
         totalPrice += item.price;
+        quantity = item.roundOffAmount;
         if (item.item === 'Channa') {
-            adjustedChanna += Number(item.amount);
+            adjustedChanna += Number(item.roundOffAmount);
+            quantity = adjustedChanna.toFixed(0);
         }
         else if (item.item === 'Moongi') {
-            adjustedMoongi += Number(item.amount);
+            adjustedMoongi += Number(item.roundOffAmount);
+            quantity = adjustedMoongi.toFixed(0);
         }
         else if (item.item === 'Biscuits') {
-            biscuitUnits = Number(item.amount)/biscuitWeight;
+            biscuitUnits = Number(item.roundOffAmount)/biscuitWeight;
         }
+        // TODO: Make this better!
+        units_list.push({ 'item': item.item, 'units': units_calc(quantity, itemizations[item.item]) });
     });
     totalPrice = totalPrice.toFixed(2);
     console.log(totalPrice);
@@ -72,36 +98,64 @@ const ShowScreen = ({ navigation }) => {
             <Text style={styles.subtextStyle}>{report.threetosixCount}</Text>
         </View>
         <Spacer />
-        <Spacer />
-        <View style={styles.tableStyle}>
-            <Text style={styles.tableHeader}>   Item</Text>
-            <Text style={styles.tableHeader}>   Qty.</Text>
-            <Text style={styles.tableHeader}>   Rounded</Text>
-            <Text style={styles.tableHeader}>   Price</Text>
-        </View>
-        <FlatList
-            data={report.results}
-            keyExtractor={report => report.item}
-            renderItem={({item}) => {
-                return (
-                    <View style={styles.tableStyle}>
-                    <Text style={styles.tableContents}>   {item.item}</Text>
-                    <Text style={styles.tableContents}>   {item.amount}g</Text>
-                    <Text style={styles.tableContents}>   {item.roundOffAmount}g</Text>
-                    <Text style={styles.tableContents}>   {'\u20B9'}{item.price}</Text>
-                    </View>
-                );
+        <Tab value={index} onChange={setIndex} indicatorStyle={{
+                backgroundColor: 'rgba(90, 154, 230, 1)',
+                height: 4
             }}
-        />
+            dense>
+            <Tab.Item buttonStyle={(active) => ({
+                    backgroundColor: active ? "red" : undefined,
+                })} 
+                titleStyle={{color: 'rgba(90, 154, 230, 1)', fontWeight: "bold"}} 
+                title="Prices" 
+            >
+                Prices
+            </Tab.Item>
+            <Tab.Item title="Units" titleStyle={{color: 'rgba(90, 154, 230, 1)', fontWeight: "bold"}}>Tab 2</Tab.Item>
+        </Tab>
+        {index === 0 ? <View style={{marginTop:3}}>
+            <View style={styles.tableStyle}>
+                <Text style={styles.tableHeader}>   Item</Text>
+                <Text style={styles.tableHeader}>   Qty.</Text>
+                <Text style={styles.tableHeader}>   Rounded</Text>
+                <Text style={styles.tableHeader}>   Price</Text>
+            </View>
+            <FlatList
+                data={report.results}
+                keyExtractor={report => report.item}
+                renderItem={({item}) => {
+                    return (
+                        <View style={styles.tableStyle}>
+                        <Text style={styles.tableContents}>   {item.item}</Text>
+                        <Text style={styles.tableContents}>   {item.amount}g</Text>
+                        <Text style={styles.tableContents}>   {item.roundOffAmount}g</Text>
+                        <Text style={styles.tableContents}>   {'\u20B9'}{item.price}</Text>
+                        </View>
+                    );
+                }}
+            />
+        </View> : <View style={{marginTop: 3}}>
+            <FlatList
+                data={units_list}
+                keyExtractor={item => item.item}
+                renderItem={({item}) => {
+                    return (
+                        <View style={styles.dialogueStyle}>
+                            <Text style={styles.dialogueItem}>{item.item}</Text>
+                            <Text style={styles.dialogueAmount}>{item.units}</Text>
+                        </View>
+                    );
+                }}
+            />
+        </View>}
+        <Spacer />
         <Text style={styles.infoViewStrong}>Total price for {report.name}: {'\u20B9'}{totalPrice}</Text>
-        <Text style={styles.infoViewStrong}>Biscuit Packets @ {biscuitWeight}g: {biscuitUnits} ({Math.ceil(biscuitUnits)} pkts)</Text>
         { report.adjustments ? <Spacer>
             <Text style={styles.infoViewStrongNoMargin}>Adjustments:</Text>
-            <Text style={styles.important}>Adjusted quantity for Channa: {adjustedChanna.toFixed(2)}g (Extra {report.adjustments.Channa}g)</Text>
-            <Text style={styles.important}>Adjusted quantity for Moongi: {adjustedMoongi.toFixed(2)}g (Extra {report.adjustments.Moongi}g)</Text>
-            <Text style={styles.infoViewStrongNoMargin}>Total price after adjustments: {'\u20B9'}{(Number(totalPrice) + Number(adjustedPrice)).toFixed(2)}</Text>
+            <Text style={styles.important}>Adjusted quantity for Channa: {adjustedChanna.toFixed(0)}g (Extra {report.adjustments.Channa}g)</Text>
+            <Text style={styles.important}>Adjusted quantity for Moongi: {adjustedMoongi.toFixed(0)}g (Extra {report.adjustments.Moongi}g)</Text>
+            <Text style={styles.infoViewStrongNoMargin}>Final price after adjustments: {'\u20B9'}{(Number(totalPrice) + Number(adjustedPrice)).toFixed(2)}</Text>
         </Spacer> : <Text style={styles.infoViewStrong}>No adjustments</Text>}
-        <Spacer />
         <Spacer />
     </>
 };
@@ -117,6 +171,9 @@ ShowScreen.navigationOptions = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+    header: {
+        flexDirection: 'row'
+    },
     title: {
         margin: 10
     },
@@ -177,7 +234,26 @@ const styles = StyleSheet.create({
     important: {
         color: 'blue',
         fontWeight: "bold"
-    }
+    },
+    dialogueStyle: {
+        flexDirection: 'row',
+        alignItems: "flex-start",
+        backgroundColor: "#e6f7ff",
+        borderBottomWidth:0.5,
+    },
+    dialogueItem: {
+        flex: 1.5,
+        fontSize: 14,
+        alignItems: "stretch",
+        fontWeight: "bold",
+        marginHorizontal: 20
+    },
+    dialogueAmount: {
+        flex: 2,
+        fontSize: 14,
+        alignItems: "stretch",
+        marginHorizontal: 20
+    },
 });
 
 export default ShowScreen;
