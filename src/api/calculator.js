@@ -1,6 +1,12 @@
 import scale from './scale.json';
 
-const roundOffToNearestTen = (number, unit) => {
+const roundOffToNearestTen = (number, unit, threshold, item) => {
+    console.log('Unit for ', item, ' = ', unit, ' and amount = ', number);
+    if (item === 'Suji') {
+        let roundOffAmount = (number%unit < unit/2 && (number/unit).toFixed(0) != 0) ? Math.floor(number/unit) * unit : Math.ceil(number/unit) * unit;
+        console.log(number, ' ', unit, ' ', threshold, ' ', item);
+        return roundOffAmount <= threshold ? roundOffAmount + 1500 : roundOffAmount;
+    }
     return (number%unit < unit/2 && (number/unit).toFixed(0) != 0) ? Math.floor(number/unit) * unit : Math.ceil(number/unit) * unit;
 }
 
@@ -12,11 +18,11 @@ const calculateNutritionAmount = (metrics, breakfast, prices) => {
         'Haldi': 1000,
         'Salt': 1000,
         'Biscuits': 50,
-        'Suji': 500,
+        'Suji': 1500,
         'Rice': 10,
         'Moongi': 10,
         'Channa': 10,
-        'Sugar': 10,
+        'Sugar': 1000,
         'Nutri': 10
     }
     console.log('ENTER CALCULATOR')
@@ -106,7 +112,7 @@ const calculateNutritionAmount = (metrics, breakfast, prices) => {
                 });
             });
             Object.keys(temp).forEach(tempKey => {
-                finalPrice += roundOffToNearestTen(temp[tempKey], itemizations[tempKey]) * prices_reworked[tempKey]/1000;
+                finalPrice += roundOffToNearestTen(temp[tempKey], itemizations[tempKey], roundOffToNearestTen(temp['Ghee'], itemizations['Ghee'], null, 'Ghee'), tempKey) * prices_reworked[tempKey]/1000;
             });
             if (finalPrice > totalMoney) {
                 let diff = totalMoney - lastPrice;
@@ -130,7 +136,7 @@ const calculateNutritionAmount = (metrics, breakfast, prices) => {
     };
     console.log(lastTemp);
     Object.keys(lastTemp).forEach(tempKey => {
-        results.push({ 'item': tempKey, 'amount': lastTemp[tempKey], 'roundOffAmount': roundOffToNearestTen(lastTemp[tempKey], itemizations[tempKey]), 'price': roundOffToNearestTen(lastTemp[tempKey], itemizations[tempKey]) * prices_reworked[tempKey]/1000 });
+        results.push({ 'item': tempKey, 'amount': lastTemp[tempKey], 'roundOffAmount': roundOffToNearestTen(lastTemp[tempKey], itemizations[tempKey], roundOffToNearestTen(lastTemp['Ghee'], itemizations['Ghee'], null, 'Ghee'), tempKey), 'price': roundOffToNearestTen(lastTemp[tempKey], itemizations[tempKey], roundOffToNearestTen(lastTemp['Ghee'], itemizations['Ghee'], null, 'Ghee'), tempKey) * prices_reworked[tempKey]/1000 });
     });
     console.log('EXIT CALCULATOR -> ', results)
     return { results, days, adjustments };
