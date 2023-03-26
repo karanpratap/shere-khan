@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, Text, FlatList, Button, TouchableOpacity, Image, ToastAndroid } from "react-native";
+import { View, StyleSheet, Text, FlatList, TouchableOpacity, Image, ToastAndroid } from "react-native";
 import { Context as ReportContext } from "../context/ReportContext";
 import { Context as PricesContext } from "../context/PricesContext";
 import { Context as ReleaseContext } from "../context/ReleaseContext";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { Feather } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
-import { Dialog, FAB } from "react-native-elements";
+import { Card, Dialog, FAB } from "react-native-elements";
 import { expo } from '../../app.json';
 import { Linking } from "react-native";
 import Spacer from "../components/Spacer";
@@ -49,26 +49,40 @@ const IndexScreen = ({ navigation }) => {
 
   return(
     <View style={styles.main}>
-      {state.length >0 ? <FlatList 
-        data={state}
-        keyExtractor={report => report.name}
-        renderItem={({item}) => {
-            return (
-              <TouchableOpacity onPress={() => navigation.navigate('Show', { id: item.id })}> 
-                <View style={styles.row}>
-                  <Text style={styles.title}>{item.name}</Text>
-                  {/* <TouchableOpacity onPress={() => {deleteReport(item.id)}}> */}
-                  <TouchableOpacity onPress={() => {
-                    setDialogue(!dialogue);
-                    setCenterToDelete([item.name, item.id]);
-                    }}>
-                    <Feather style={styles.icon} name='trash' />
+      {state.length >0 ? <View>
+        <FlatList 
+          style={{paddingBottom: 100}}
+          data={[...state, null]}
+          keyExtractor={report => report ? report.name : 'blank'}
+          renderItem={({item}) => {
+              return item ? (
+                <Card containerStyle={[{borderRadius: 20, backgroundColor: "#22247b", shadowColor: "#5c60ee"}, styles.elevation]}>
+                  <TouchableOpacity onPress={() => navigation.navigate('Show', { id: item.id })}> 
+                    <Card.Title style={{color: "white"}}>{item.name}</Card.Title>
+                    <Card.Divider />
+                    <View style={styles.row}>
+                      <View>
+                        {item.money != 0 ? <Text style={styles.title}>Money Received: {'\u20B9'}{item.money}</Text> : <Text style={styles.title}>Calculated based on days</Text>}
+                        <Text style={styles.title}>Days: {item.days}</Text>
+                      </View>
+                      {/* <TouchableOpacity onPress={() => {deleteReport(item.id)}}> */}
+                      <TouchableOpacity onPress={() => {
+                        setDialogue(!dialogue);
+                        setCenterToDelete([item.name, item.id]);
+                        }}>
+                        <View style={styles.iconContainer}>
+                          <Feather style={styles.icon} name='trash' />
+                        </View>
+                      </TouchableOpacity>
+                    </View>
                   </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            );
-        }}
-      /> : <View style={styles.empty}>
+                </Card>
+              ) : <View style={{height: 120, justifyContent: "center"}}>
+                <Text style={styles.subtitle}>Total {state.length} reports</Text>
+              </View>;
+          }}
+        />
+      </View>: <View style={styles.empty}>
         <Image style={styles.image} source={require('../../assets/lion.png')} odds={3} />
         <Spacer />
         <Spacer />
@@ -78,7 +92,7 @@ const IndexScreen = ({ navigation }) => {
         onPress={() => navigation.navigate('Create')}
         placement="right"
         icon={{ name: 'add', color: 'white' }}
-        color="#3366ff"
+        color='#1268ff'
         style={styles.fab}
       />
       <Dialog
@@ -125,6 +139,16 @@ IndexScreen.navigationOptions = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  elevation: {
+    elevation: 30,
+    shadowColor: 'black',
+  },
+  shadowProp: {
+    shadowColor: '#171717',
+    shadowOffset: {width: -2, height: 4},
+    shadowOpacity: 0.9,
+    shadowRadius: 3,
+  },
   main: {
     flex: 1,
   },
@@ -138,17 +162,25 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 20,
+    // borderWidth: 1,
+    // paddingVertical: 20,
     paddingHorizontal: 10,
-    borderTopWidth: 1,
-    borderColor: 'gray'
+    borderColor: '#22247b'
   },
   title: {
-    fontSize: 18
+    fontSize: 14,
+    color: "white"
   },
   icon: {
     fontSize: 24,
-    color: 'red'
+    color: 'red',
+    alignContent: "stretch",
+    flex: 1
+  },
+  iconContainer: {
+    alignContent: "center",
+    // borderWidth: 1,
+    flex: 1
   },
   fab: {
     alignSelf: "flex-end",
