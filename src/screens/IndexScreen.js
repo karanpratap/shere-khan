@@ -78,7 +78,7 @@ const IndexScreen = ({ navigation }) => {
                   </TouchableOpacity>
                 </Card>
               ) : <View style={{height: 120, justifyContent: "center"}}>
-                <Text style={styles.subtitle}>Total {state.length} reports</Text>
+                <Text style={styles.subtitle}>Total {state.length} report(s)</Text>
               </View>;
           }}
         />

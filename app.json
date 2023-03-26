@@ -2,7 +2,7 @@
   "expo": {
     "name": "Shere Khan",
     "slug": "Shere_Khan",
-    "version": "1.5",
+    "version": "1.6",
     "orientation": "portrait",
     "icon": "./assets/happy.png",
     "userInterfaceStyle": "light",
