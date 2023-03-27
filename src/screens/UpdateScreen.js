@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, Text, Linking, FlatList, Image } from "react-native";
+import { View, StyleSheet, Text, Linking, Image } from "react-native";
 import { Button, ListItem } from "react-native-elements";
 import { Ionicons } from '@expo/vector-icons';
 import { Context as ReleaseContext } from "../context/ReleaseContext";
@@ -10,7 +10,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const UpdateScreen = ({ navigation }) => {
     const [expanded, setExpanded] = useState(false);
     const [moreInfo, setMoreInfo] = useState(false);
-    const { state:releaseInfo, getReleaseInfo } = useContext(ReleaseContext);
+    const { state:releaseInfo, getReleaseInfo, downloadUpdate } = useContext(ReleaseContext);
 
     useEffect(() => {
         getReleaseInfo();
@@ -47,7 +47,7 @@ const UpdateScreen = ({ navigation }) => {
                     <Spacer />
                     <Button
                         title="Download"
-                        onPress={() => Linking.openURL(`http://144.24.138.90/release/${releaseInfo.apk}`)}
+                        onPress={() => downloadUpdate(releaseInfo.apk)}
                         icon={{
                         name: 'file-download',
                         type: 'MaterialIcons',

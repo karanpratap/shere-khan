@@ -1,6 +1,8 @@
 import createDataContext from "./createDataContext";
 import releaseInfo from "../api/releaseInfo";
 import { expo } from "../../app.json";
+import RNFetchBlob from "rn-fetch-blob";
+const { config, fs } = RNFetchBlob;
 
 const releaseReducer = (state, action) => {
     switch(action.type) {
@@ -18,8 +20,30 @@ const getReleaseInfo = dispatch => {
     }
 };
 
+const downloadUpdate = (apk) => {
+    const downloadDir = fs.dirs.DownloadDir;
+    const options = {
+        fileCache: true,
+        addAndroidDownloads: {
+            useDownloadManager : true, // setting it to true will use the device's native download manager and will be shown in the notification bar.
+            notification : true,
+            path:  downloadDir + "/" + apk, // this is the path where your downloaded file will live in
+            description : 'Downloading Update.'
+        }
+    }
+    try {
+        config(options).fetch('GET', `http://144.24.138.90/release/${apk}`).then((res) => {
+            console.log('UPDATE DOWNLOADED', res);
+            // do some magic here
+        })
+    }
+    catch (err) {
+        console.log('Error Downloading update -> ', err);
+    }
+}
+
 export const { Context, Provider } = createDataContext(
     releaseReducer,
-    { getReleaseInfo },
+    { getReleaseInfo, downloadUpdate },
     []
 )

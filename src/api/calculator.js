@@ -1,10 +1,8 @@
 import scale from './scale.json';
 
 const roundOffToNearestTen = (number, unit, threshold, item) => {
-    console.log('Unit for ', item, ' = ', unit, ' and amount = ', number);
     if (item === 'Suji') {
         let roundOffAmount = (number%unit < unit/2 && (number/unit).toFixed(0) != 0) ? Math.floor(number/unit) * unit : Math.ceil(number/unit) * unit;
-        console.log(number, ' ', unit, ' ', threshold, ' ', item);
         return roundOffAmount <= threshold ? roundOffAmount + 1500 : roundOffAmount;
     }
     return (number%unit < unit/2 && (number/unit).toFixed(0) != 0) ? Math.floor(number/unit) * unit : Math.ceil(number/unit) * unit;
