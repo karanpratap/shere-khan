@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
-import { Button, Dialog, Tab, Text } from "react-native-elements";
+import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
+import { Button, Dialog, Text } from "react-native-elements";
+import { Tab, TabView } from '@rneui/themed'
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Context as ReportContext } from "../context/ReportContext";
 import { Context as PricesContext } from "../context/PricesContext";
@@ -12,7 +13,7 @@ const ShowScreen = ({ navigation }) => {
     const [index, setIndex] = useState(0);
     const [dialogue, setDialogue] = useState(false);
     const { state, editReport } = useContext(ReportContext);
-    const { state:prices } = useContext(PricesContext)
+    const { state:prices } = useContext(PricesContext);
 
     const report = state.find((report) => report.id === navigation.getParam('id'));
     console.log(report.adjustments);
@@ -85,7 +86,6 @@ const ShowScreen = ({ navigation }) => {
 
     return <>
         <Text h4 style={styles.title}>{report.name} report for {report.days} days</Text>
-        <Spacer />
         <View style={styles.infoView}>
             <Text style={styles.textStyle}>Pregnant/Nursing:</Text>  
             <Text style={styles.subtextStyle}>{report.pregnantCount}</Text>
@@ -127,52 +127,55 @@ const ShowScreen = ({ navigation }) => {
                 height: 4
             }}
             dense>
-            <Tab.Item buttonStyle={(active) => ({
-                    backgroundColor: active ? "red" : undefined,
-                })} 
-                titleStyle={{color: 'rgba(90, 154, 230, 1)', fontWeight: "bold"}} 
-                title="Prices" 
-            >
-                Prices
-            </Tab.Item>
-            <Tab.Item title="Units" titleStyle={{color: 'rgba(90, 154, 230, 1)', fontWeight: "bold"}}>Tab 2</Tab.Item>
+            <Tab.Item titleStyle={{color: 'rgba(90, 154, 230, 1)', fontWeight: "bold"}} title="Prices">Prices</Tab.Item>
+            <Tab.Item title="Units" titleStyle={{color: 'rgba(90, 154, 230, 1)', fontWeight: "bold"}}>Units</Tab.Item>
         </Tab>
-        {index === 0 ? <View style={{marginTop:3}}>
-            <View style={styles.tableStyle}>
-                <Text style={styles.tableHeader}>   Item</Text>
-                <Text style={styles.tableHeader}>   Qty.</Text>
-                <Text style={styles.tableHeader}>   Rounded</Text>
-                <Text style={styles.tableHeader}>   Price</Text>
-            </View>
-            <FlatList
-                data={report.results}
-                keyExtractor={report => report.item}
-                renderItem={({item}) => {
-                    return (
-                        <View style={styles.tableStyle}>
-                        <Text style={styles.tableContents}>   {item.item}</Text>
-                        <Text style={styles.tableContents}>   {item.amount}g</Text>
-                        <Text style={styles.tableContents}>   {item.roundOffAmount}g</Text>
-                        <Text style={styles.tableContents}>   {'\u20B9'}{item.price}</Text>
-                        </View>
-                    );
-                }}
-            />
-        </View> : <View style={{marginTop: 3}}>
-            <FlatList
-                data={units_list}
-                keyExtractor={item => item.item}
-                renderItem={({item}) => {
-                    return (
-                        <View style={styles.dialogueStyle}>
-                            <Text style={styles.dialogueItem}>{item.item}</Text>
-                            <Text style={styles.dialogueAmount}>{item.units}</Text>
-                        </View>
-                    );
-                }}
-            />
-        </View>}
-        
+        <TabView value={index} onChange={setIndex} indicatorStyle={{
+                backgroundColor: 'rgba(90, 154, 230, 1)',
+                height: 4
+            }}
+        >
+            <TabView.Item style={{ width: '100%' }}>
+                <View style={{marginTop:3}}>
+                    <View style={styles.tableStyle}>
+                        <Text style={styles.tableHeader}>   Item</Text>
+                        <Text style={styles.tableHeader}>   Qty.</Text>
+                        <Text style={styles.tableHeader}>   Rounded</Text>
+                        <Text style={styles.tableHeader}>   Price</Text>
+                    </View>
+                    <FlatList
+                        data={report.results}
+                        keyExtractor={report => report.item}
+                        renderItem={({item}) => {
+                            return (
+                                <View style={styles.tableStyle}>
+                                <Text style={styles.tableContents}>   {item.item}</Text>
+                                <Text style={styles.tableContents}>   {item.amount}g</Text>
+                                <Text style={styles.tableContents}>   {item.roundOffAmount}g</Text>
+                                <Text style={styles.tableContents}>   {'\u20B9'}{item.price}</Text>
+                                </View>
+                            );
+                        }}
+                    />
+                </View>
+            </TabView.Item>
+            <TabView.Item style={{ width: '100%' }}>
+                <View style={{marginTop: 3}}>
+                    <FlatList
+                        data={units_list}
+                        keyExtractor={item => item.item}
+                        renderItem={({item}) => {
+                            return (
+                                <View style={styles.dialogueStyle}>
+                                    <Text style={styles.dialogueItem}>{item.item}</Text>
+                                    <Text style={styles.dialogueAmount}>{item.units}</Text>
+                                </View>
+                            );
+                        }}
+                    />
+                </View>
+            </TabView.Item>
+        </TabView>
         <Dialog
             isVisible={dialogue}
             onBackdropPress={() => setUpdateDialogue(!setDialogue)}
@@ -189,13 +192,6 @@ const ShowScreen = ({ navigation }) => {
             <Dialog.Button titleStyle={{color: 'rgba(90, 154, 230, 1)'}} title="OK" onPress={() => setDialogue(!dialogue)} />
             </Dialog.Actions>
         </Dialog>
-        {/* <Text style={styles.infoViewStrong}>Total price for {report.name}: {'\u20B9'}{totalPrice}</Text>
-        { report.adjustments ? <Spacer>
-            <Text style={styles.infoViewStrongNoMargin}>Adjustments:</Text>
-            <Text style={styles.important}>Adjusted quantity for Channa: {adjustedChanna.toFixed(0)}g (Extra {report.adjustments.Channa}g)</Text>
-            <Text style={styles.important}>Adjusted quantity for Moongi: {adjustedMoongi.toFixed(0)}g (Extra {report.adjustments.Moongi}g)</Text>
-            <Text style={styles.infoViewStrongNoMargin}>Final price after adjustments: {'\u20B9'}{(Number(totalPrice) + Number(adjustedPrice)).toFixed(2)}</Text>
-        </Spacer> : <Text style={styles.infoViewStrong}>No adjustments</Text>} */}
     </>
 };
 

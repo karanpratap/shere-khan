@@ -19,7 +19,7 @@ const NutritionReportForm = ({ onSubmit, initialValues }) => {
             <Text h3>Specify metrics</Text>
         </Spacer>
         <Spacer />
-        <Input placeholder="Enter a center name" errorMessage={name.length == 0 ? "Center name cannot be empty" : null} value={name} onChangeText={setName} label="Center name" />
+        <Input placeholder="Enter a ward name" errorMessage={name.length == 0 ? "Ward name cannot be empty" : null} value={name} onChangeText={setName} label="Ward name" />
         <View style={styles.radio}>
             <CheckBox
                 title="Days"
@@ -41,7 +41,7 @@ const NutritionReportForm = ({ onSubmit, initialValues }) => {
             <Spacer />
             <NumericInput totalWidth={150} value={days} totalHeight={50} minValue={0} onChange={value => setDays(value)} rounded />
         </Spacer> : <Spacer>
-            <Input placeholder="Enter the money received" label="Money received" keyboardType="numeric" inputMode="numeric" value={'' + money} onChangeText={ value => setMoney(value)} errorMessage={!money ? "Money received is required" : null} />
+            <Input placeholder="Enter the money received" label="Money received" keyboardType="numeric" inputMode="numeric" value={money === 0 ? '' : '' + money} onChangeText={ value => setMoney(value)} errorMessage={!money ? "Money received is required" : null} />
         </Spacer> }
         <Spacer>
             <Text style={styles.numericLabels}>Number of Pregnant/Nursing beneficiaries</Text>

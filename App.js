@@ -4,6 +4,7 @@ import { createStackNavigator } from "react-navigation-stack";
 import { Provider as ReportProvider} from "./src/context/ReportContext";
 import { Provider as PricesProvider } from "./src/context/PricesContext";
 import { Provider as ReleaseProvider } from "./src/context/ReleaseContext";
+import { Provider as CenterProvider } from "./src/context/ReportCenterContext";
 import CreateScreen from "./src/screens/CreateScreen";
 import EditScreen from "./src/screens/EditScreen";
 import IndexScreen from "./src/screens/IndexScreen";
@@ -13,6 +14,10 @@ import PricesEditScreen from "./src/screens/PricesEditScreen";
 import UpdateScreen from "./src/screens/UpdateScreen";
 import { StyleSheet, View } from "react-native";
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
+import EditCentersScreen from "./src/screens/EditCentersScreen";
+import UpdateCenterScreen from "./src/screens/UpdateCenterScreen";
+import EditCenterScreen from "./src/screens/EditCenterScreen";
+import ShowSplitScreen from "./src/screens/ShowSplitScreen";
 
 const functionalFlowStack = createStackNavigator({
   Index: IndexScreen,
@@ -20,7 +25,11 @@ const functionalFlowStack = createStackNavigator({
   Create: CreateScreen,
   Edit: EditScreen,
   PricesShow: PricesShowScreen,
-  PricesEdit: PricesEditScreen
+  PricesEdit: PricesEditScreen,
+  EditCenters: EditCentersScreen,
+  UpdateCenter: UpdateCenterScreen,
+  EditCenter: EditCenterScreen,
+  ShowSplit: ShowSplitScreen
   }, {
   initialRouteName: 'Index',
   defaultNavigationOptions: {
@@ -82,7 +91,9 @@ export default () => {
   return <ReportProvider>
     <PricesProvider>
       <ReleaseProvider>
-        <App />
+        <CenterProvider>
+          <App />
+        </CenterProvider>
       </ReleaseProvider>
     </PricesProvider>
   </ReportProvider>;

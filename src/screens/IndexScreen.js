@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, Text, FlatList, TouchableOpacity, Image, ToastAndroid } from "react-native";
 import { Context as ReportContext } from "../context/ReportContext";
+import { Context as ReportCenterContext } from "../context/ReportCenterContext";
 import { Context as PricesContext } from "../context/PricesContext";
 import { Context as ReleaseContext } from "../context/ReleaseContext";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -10,26 +11,33 @@ import { Card, Dialog, FAB } from "react-native-elements";
 import { expo } from '../../app.json';
 import { Linking } from "react-native";
 import Spacer from "../components/Spacer";
+import { MaterialIcons } from '@expo/vector-icons';
 // import calculateNutritionAmount from "../api/calculator_test";
 
 const IndexScreen = ({ navigation }) => {
   const { state, deleteReport, getReports } = useContext(ReportContext);
   const { getPrices } = useContext(PricesContext);
   const { state:releaseInfo, getReleaseInfo} = useContext(ReleaseContext);
+  const { state:centers, getCenterReports, deleteCenterReport } = useContext(ReportCenterContext);
   const [dialogue, setDialogue] = useState(false);
   const [updateDialogue, setUpdateDialogue] = useState(false);
   const [centerToDelete, setCenterToDelete] = useState([]);
   const netinfo = useNetInfo();
   
-  // const showErrorToast = () => {
-  //   ToastAndroid.show('Looks like you are offline', ToastAndroid.SHORT);
-  // }
+  const get_occurences = (id, arr) => {
+    return arr.filter((currentElement) => currentElement === id).length;
+  }
+
+  const centers_reworked = centers.map((item) => {
+    return item.belongsTo;
+  })
 
   useEffect(() => {
     if (!netinfo.isConnected && netinfo.isConnected != null) {
       ToastAndroid.show('Looks like you are offline', ToastAndroid.SHORT);
     }
     getReleaseInfo();
+    getCenterReports();
     getReports();
     getPrices();
     if (releaseInfo.update) {
@@ -68,13 +76,21 @@ const IndexScreen = ({ navigation }) => {
                       {/* <TouchableOpacity onPress={() => {deleteReport(item.id)}}> */}
                       <TouchableOpacity onPress={() => {
                         setDialogue(!dialogue);
-                        setCenterToDelete([item.name, item.id]);
+                        setCenterToDelete([item.name, item.id, ]);
                         }}>
                         <View style={styles.iconContainer}>
                           <Feather style={styles.icon} name='trash' />
                         </View>
                       </TouchableOpacity>
                     </View>
+                  </TouchableOpacity>
+                  <Spacer />
+                  <TouchableOpacity onPress={() => navigation.navigate('EditCenters', { id: item.id })}>
+                  <Card.Divider />
+                  <View style={styles.row_member} >
+                    {get_occurences(item.id, centers_reworked) === 0 ? <Text style={{...styles.title, fontWeight: "bold", marginBottom:3 }}>No member centers</Text> : <Text style={{...styles.title, fontWeight: "bold", marginBottom:3 }}>Member centers - {get_occurences(item.id, centers_reworked)}</Text>}
+                    <MaterialIcons style={{alignSelf: "center"}} name="navigate-next" size={15} color="white" />
+                  </View>
                   </TouchableOpacity>
                 </Card>
               ) : <View style={{height: 120, justifyContent: "center"}}>
@@ -100,9 +116,16 @@ const IndexScreen = ({ navigation }) => {
         onBackdropPress={() => setDialogue(!dialogue)}
       >
         <Dialog.Title title="Delete Report"/>
-        <Text>Delete center report for {centerToDelete[0]}?</Text>
+        <Text>Delete center report for {centerToDelete[0]} and all its member centers?</Text>
         <Dialog.Actions>
-          <Dialog.Button titleStyle={{color: 'red'}} title="Delete" onPress={() => {deleteReport(centerToDelete[1]); setDialogue(!dialogue)}}/>
+          <Dialog.Button titleStyle={{color: 'red'}} title="Delete" onPress={() => {
+            deleteReport(centerToDelete[1]);
+            // cascaded delete
+            centers.filter(center => center.belongsTo === centerToDelete[1]).forEach(item => {
+              deleteCenterReport(item.id);
+            })
+            setDialogue(!dialogue)
+          }}/>
           <Dialog.Button title="Cancel" onPress={() => setDialogue(!dialogue)}/>
         </Dialog.Actions>
       </Dialog>
@@ -166,6 +189,15 @@ const styles = StyleSheet.create({
     // paddingVertical: 20,
     paddingHorizontal: 10,
     borderColor: '#22247b'
+  },
+  row_member: {
+    flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // borderWidth: 1,
+    // paddingVertical: 20,
+    // paddingHorizontal: 10,
+    borderColor: '#ffffff',
+    // borderWidth: 1,
   },
   title: {
     fontSize: 14,

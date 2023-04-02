@@ -10,7 +10,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const UpdateScreen = ({ navigation }) => {
     const [expanded, setExpanded] = useState(false);
     const [moreInfo, setMoreInfo] = useState(false);
-    const { state:releaseInfo, getReleaseInfo, downloadUpdate } = useContext(ReleaseContext);
+    const { state:releaseInfo, getReleaseInfo } = useContext(ReleaseContext);
 
     useEffect(() => {
         getReleaseInfo();
@@ -47,7 +47,7 @@ const UpdateScreen = ({ navigation }) => {
                     <Spacer />
                     <Button
                         title="Download"
-                        onPress={() => downloadUpdate(releaseInfo.apk)}
+                        onPress={() => Linking.openURL(`http://144.24.138.90/release/${releaseInfo.apk}`)}
                         icon={{
                         name: 'file-download',
                         type: 'MaterialIcons',
